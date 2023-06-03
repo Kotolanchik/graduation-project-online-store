@@ -1,0 +1,23 @@
+syntax = "proto3";
+package product.grpc;
+
+message ProductInfo {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int64 amount = 5;
+}
+
+message ProductInfoRequest {
+  int64 id = 1;
+}
+
+message ProductInfoResponse {
+  ProductInfo productInfo = 1;
+}
+
+message ProductIdsRequest {
+  repeated int64 ids = 1;
+}
+

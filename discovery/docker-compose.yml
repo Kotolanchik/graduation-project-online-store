@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  discovery-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    volumes:
+      - ./src:/app/src
+    environment:
+      server.port: 8761
+    networks:
+      - store
+
+networks:
+  store:
+    external: true
+    driver: bridge

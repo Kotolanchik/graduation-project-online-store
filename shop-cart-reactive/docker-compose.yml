@@ -1,0 +1,56 @@
+version: "3.9"
+services:
+  shop-cart-reactive:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8081"
+    volumes:
+      - ./src:/app/src
+    environment:
+#      eureka.client.service-url.defaultZone: http://discovery-service:8761/eureka/
+      server.port: 8081
+#      spring.datasource.url: jdbc:postgresql://postgresql_catalog:5432/catalogdb
+#      spring.datasource.username: postgres
+#      spring.datasource.password: postgres
+#      spring.basic.enable: 'false'
+#      security.basic.enabled: 'false'
+      spring.r2dbc.url: r2dbc:postgresql://postgresql_shop_cart:5432/shop-cartDB
+      spring.r2dbc.username: postgres
+      spring.r2dbc.password: postgres
+#      spring.flyway.url: jdbc:postgresql://postgresql_shop_cart:5432/shop-cartDB
+#      spring.flyway.username: postgres
+#      spring.flyway.password: postgres
+#      spring.flyway.locations: classpath:db/migration
+    depends_on:
+      - postgresql_shop_cart
+    networks:
+      - store
+    logging:
+      options:
+        max-size: 10m
+        max-file: '10'
+
+  postgresql_shop_cart:
+    image: postgres:15.3
+    restart: unless-stopped
+    ports:
+      - "5556:5432"
+#    command: postgres -c max_connections=600 -c shared_buffers=6GB
+    environment:
+      - POSTGRES_DB=shop-cartDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql_shop_cart
+    volumes:
+   #   - ./src/resources/migration/V1__create_table.sql:/docker-entrypoint-initdb.d/V1__create_table.sql
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - store
+networks:
+  store:
+    external: true
+    driver: bridge
+

@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package ru.grpc.shop.cart.service;
+
+option java_multiple_files = true;
+option java_outer_classname = "ShopCartGrpc";
+
+import "google/protobuf/wrappers.proto";
+
+service ShopCartService {
+  rpc addProductInShopCart (AddProductInShopCartRequest) returns (AddProductInShopCartResponse);
+  rpc getAllShopCart (GetUserShopCartRequest) returns (GetUserShopCartResponse);
+  rpc updateProductQuantityInShopCart (UpdateProductQuantityInShopCartRequest) returns (UpdateProductQuantityInShopCartResponse);
+  rpc getShopCartProduct (GetShopCartItemRequest) returns (GetShopCartItemResponse);
+  rpc deleteProductFromShopCart (DeleteProductFromShopCartRequest) returns (Empty);
+  rpc deleteProductsFromShopCart (DeleteProductsFromShopCartRequest) returns (Empty);
+}
+
+message Empty {}
+
+message ShopCart {
+  int64 userId = 1;
+  int64 productId = 2;
+  int64 quantity = 3;
+}
+
+message ShopCartDTO {
+  int64 userId = 1;
+  ProductInfo product = 2;
+  int64 quantity = 3;
+}
+
+message ProductInfo {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string price = 4;
+  int64 amount = 5;
+  CategoryInfo category = 6;
+  ProductState state = 7;
+  repeated ImageInfo images = 8;
+  repeated AttributeInfo attributes = 9;
+}
+
+message ImageInfo{
+  int64 id = 1;
+  string name = 2;
+  bytes path = 3;
+  int64 size = 4;
+}
+
+message AttributeInfo{
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message CategoryInfo {
+  int64 id = 1;
+  string name = 2;
+}
+
+enum ProductState {
+  AVAILABLE = 0;
+  NOT_AVAILABLE = 1;
+}
+
+message AddProductInShopCartRequest {
+  int64 userId = 1;
+  int64 productId = 2;
+}
+
+message GetUserShopCartRequest {
+  int64 userId = 1;
+}
+
+message UpdateProductQuantityInShopCartRequest {
+  ShopCart shopCart = 1;
+}
+
+message GetShopCartItemRequest{
+  int64 userId = 1;
+  int64 productId = 2;
+}
+
+message DeleteProductFromShopCartRequest {
+  int64 userId = 1;
+  int64 productId = 2;
+}
+
+message DeleteProductsFromShopCartRequest {
+  int64 userId = 1;
+
+}
+
+message AddProductInShopCartResponse {
+  ShopCart shopCart = 1;
+}
+
+message GetUserShopCartResponse {
+  repeated ShopCartDTO shopCart = 1;
+}
+
+message UpdateProductQuantityInShopCartResponse {
+  ShopCart shopCart = 1;
+}
+
+message GetShopCartItemResponse {
+  ShopCartDTO shopCart = 1 ;
+}

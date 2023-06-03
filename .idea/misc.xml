@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/catalog/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/identity/pom.xml" />
+        <option value="$PROJECT_DIR$/discovery/pom.xml" />
+        <option value="$PROJECT_DIR$/shop-order/pom.xml" />
+        <option value="$PROJECT_DIR$/shop-cart/pom.xml" />
+        <option value="$PROJECT_DIR$/catalog-service/pom.xml" />
+        <option value="$PROJECT_DIR$/catalog-reactive/pom.xml" />
+        <option value="$PROJECT_DIR$/shop-cart-reactive/pom.xml" />
+        <option value="$PROJECT_DIR$/shop-cart-reactive-grpc/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/catalog-service/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_20" project-jdk-name="20" project-jdk-type="JavaSDK" />
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
+  </component>
+</project>

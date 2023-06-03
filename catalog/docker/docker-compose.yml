@@ -1,0 +1,51 @@
+version: '3.5'
+services:
+  waiting-list:
+    image: mobile/waiting-list-spring-reactive-jvm:1.0
+    restart: always
+    depends_on:
+      - postgresql_waiting_list
+    networks:
+      - waiting-list-server-lan
+    ports:
+      - ${PORT}:8080
+    volumes:
+      - ${KEY_LOCATION}:${KEY_VOL_LOCATION}
+    env_file: .env
+    environment:
+      server.port: 8080
+      spring.basic.enable: 'false'
+      security.basic.enabled: 'false'
+      spring.r2dbc.pool.max-size: 600
+      spring.r2dbc.username: ${POSTGRES_USER}
+      spring.r2dbc.password: ${POSTGRES_PASSWORD}
+      spring.r2dbc.url: 'r2dbc:postgresql://postgresql_waiting_list/mobile_sample_waiting_list'
+      product.catalog.api: 'http://catalog_server:8080/product/list'
+      TZ: "Europe/Moscow"
+    logging:
+      options:
+        max-size: 10m
+        max-file: '10'
+  postgresql_waiting_list:
+    image: postgres:13.1
+    restart: always
+    command: postgres -c max_connections=600 -c shared_buffers=6GB
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=mobile_sample_waiting_list
+      - POSTGRES_HOST=postgresql_waiting_list
+      - POSTGRES_PORT=5432
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - C_FORCE_ROOT=true
+    volumes:
+      - pgdata_asdawdawdaw:/var/lib/postgresql/data
+    networks:
+      - waiting-list-server-lan
+networks:
+  waiting-list-server-lan:
+    name: mobile-sample-lan
+    external: true
+    driver: bridge
+volumes:
+  pgdata_asdawdawdaw: { }

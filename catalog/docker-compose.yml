@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  catalog-service:
+    build:
+
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./src:/app/src
+    environment:
+      eureka.client.service-url.defaultZone: http://discovery-service:8761/eureka/
+      server.port: 8080
+      spring.datasource.url: jdbc:postgresql://postgresql_catalog:5432/catalogdb
+      spring.datasource.username: postgres
+      spring.datasource.password: postgres
+
+    depends_on:
+      - postgresql_catalog
+    networks:
+      - store
+
+  postgresql_catalog:
+    image: postgres:15.3
+    restart: unless-stopped
+    ports:
+      - "5555:5432"
+    command: postgres -c max_connections=600 -c shared_buffers=6GB
+    environment:
+      - POSTGRES_DB=catalogdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql_catalog
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - store
+networks:
+  store:
+    external: true
+    driver: bridge
+

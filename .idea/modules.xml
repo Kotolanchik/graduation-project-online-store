@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/catalog/catalog.iml" filepath="$PROJECT_DIR$/catalog/catalog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/discovery/discovery.iml" filepath="$PROJECT_DIR$/discovery/discovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/identity/identity.iml" filepath="$PROJECT_DIR$/identity/identity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/main-servicies.iml" filepath="$PROJECT_DIR$/.idea/main-servicies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shop-cart/shop-cart.iml" filepath="$PROJECT_DIR$/shop-cart/shop-cart.iml" />
+    </modules>
+  </component>
+</project>
