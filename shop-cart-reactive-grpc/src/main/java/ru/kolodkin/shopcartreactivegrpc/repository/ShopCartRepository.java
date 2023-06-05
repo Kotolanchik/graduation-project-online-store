@@ -15,8 +15,16 @@ public interface ShopCartRepository extends R2dbcRepository<ShopCart, CompositeS
 
     Flux<ShopCart> findAllByUserId(Long userId);
 
+    @Query("""
+            DELETE FROM public.shop_cart 
+            WHERE user_id = :userId AND product_id = :productId
+            """)
     Mono<Void> deleteByUserIdAndProductId(Long userId, Long productId);
 
+    @Query("""
+             DELETE FROM public.shop_cart 
+             WHERE user_id = :userId 
+            """)
     Mono<Void> deleteAllByUserId(Long userId);
 
     @Query("""

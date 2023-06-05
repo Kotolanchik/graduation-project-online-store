@@ -10,8 +10,9 @@
         <module name="gateway" />
         <module name="identity" />
         <module name="discovery" />
+        <module name="shop-cart-reactive-grpc" />
       </profile>
-      <profile name="Annotation profile for shop-cart-reactive-grpc" enabled="true">
+      <profile name="Annotation profile for shop-cart-reactive" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -21,7 +22,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.3.Final/mapstruct-1.5.3.Final.jar" />
         </processorPath>
         <module name="shop-cart" />
-        <module name="shop-cart-reactive-grpc" />
         <module name="shop-cart-reactive" />
         <module name="catalog-reactive" />
         <module name="catalog" />

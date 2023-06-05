@@ -1,16 +1,17 @@
 package ru.kolodkin.shopcartreactivegrpc.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.kolodkin.shopcartreactivegrpc.bean.ProductInfo;
 import ru.kolodkin.shopcartreactivegrpc.bean.ShopCartDTO;
-import ru.kolodkin.shopcartreactivegrpc.bean.ShopCartSimpleDTO;
 import ru.kolodkin.shopcartreactivegrpc.entity.ShopCart;
 import ru.kolodkin.shopcartreactivegrpc.repository.ShopCartRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShopCartServiceImpl implements ShopCartService {
@@ -21,40 +22,49 @@ public class ShopCartServiceImpl implements ShopCartService {
     @Override
     public Mono<ShopCart> addProductInShopCart(Long userId, Long productId) {
         return repository.save(ru.kolodkin.shopcartreactivegrpc.entity.ShopCart.builder()
-                .productId(productId)
-                .userId(userId)
-                .quantity(1L)
-                .build());
+                        .productId(productId)
+                        .userId(userId)
+                        .quantity(1L)
+                        .build())
+                .doOnSuccess(success -> log.info("Товар добавлен в корзину пользователя userId: {}", success.getUserId()));
     }
 
     @Transactional
     @Override
     public Flux<ShopCartDTO> getAllShopCart(Long userId) {
-        return shopCartListToDTOList(repository.findAllByUserId(userId));
+        return shopCartListToDTOList(repository.findAllByUserId(userId))
+                .doOnError(error -> log.error(error.getMessage()));
     }
 
     @Transactional
     @Override
     public Mono<ShopCart> updateProductQuantityInShopCart(Long userId, Long productId, Long quantity) {
-        return repository.updateQuantityByUserIdAndProductId(userId, productId, quantity);
+        return repository.updateQuantityByUserIdAndProductId(userId, productId, quantity)
+                .doOnError(error -> log.error(error.getMessage()))
+                .doOnSuccess(success -> log.info("Информация о количестве товаров успешно обновлена"));
     }
 
     @Transactional
     @Override
     public Mono<ShopCartDTO> getShopCartProduct(Long userId, Long productId) {
-        return shopCartToDTO(repository.findByUserIdAndProductId(userId, productId));
+        return shopCartToDTO(repository.findByUserIdAndProductId(userId, productId))
+                .doOnError(error -> log.error(error.getMessage()))
+                .doOnNext(next -> log.info("Получен товар из корзины пользователя userId: {}", next.getUserId()));
     }
 
-    @Transactional
     @Override
     public Mono<Void> deleteProductFromShopCart(Long userId, Long productId) {
-        return repository.deleteByUserIdAndProductId(userId, productId);
+        return repository.deleteByUserIdAndProductId(userId, productId)
+                .doOnError(error -> log.error(error.getMessage()))
+                .doOnSuccess(success -> log.info("Товар: {} пользователя: {} удалён", productId, userId));
+
     }
 
-    @Transactional
     @Override
     public Mono<Void> deleteProductsFromShopCart(Long userId) {
-        return repository.deleteAllByUserId(userId);
+        return repository.deleteAllByUserId(userId)
+                .doOnError(error -> log.error(error.getMessage()))
+                .doOnSuccess(success -> log.info("Удалены все товары пользователя: {}", userId));
     }
 
     private Flux<ShopCartDTO> shopCartListToDTOList(final Flux<ShopCart> shopCartFlux) {

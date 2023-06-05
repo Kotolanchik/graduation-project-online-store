@@ -2,21 +2,24 @@ package ru.kolodkin.shopcartreactivegrpc.delivery;
 
 import com.google.protobuf.ByteString;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.devh.boot.grpc.server.service.GrpcService;
 import reactor.core.publisher.Mono;
 import ru.grpc.shop.cart.service.*;
+import ru.kolodkin.shopcartreactivegrpc.interceptors.LogGrpcInterceptor;
 import ru.kolodkin.shopcartreactivegrpc.service.ShopCartService;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
-@GrpcService
+@GrpcService(interceptors = {LogGrpcInterceptor.class})
+@Slf4j
 @RequiredArgsConstructor
 public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServiceImplBase {
     private final ShopCartService shopCartService;
-
     private static final Long TIMEOUT_MILLIS = 5000L;
-
 
     @Override
     public Mono<AddProductInShopCartResponse> addProductInShopCart(Mono<AddProductInShopCartRequest> request) {
@@ -33,124 +36,56 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
 
 
     @Override
-    public Mono<GetUserShopCartResponse> getAllShopCart(Mono<GetUserShopCartRequest> request) {
-    /*
-      еще вариант, проверку не проходил на работу
-      val builder = GetUserShopCartResponse.newBuilder();
-
-        request.flatMapMany(req -> shopCartService.getAllShopCart(req.getUserId())
-                        .map(shopCartDTO -> ShopCartDTO.newBuilder()
-                                .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
-                                .setQuantity(shopCartDTO.getQuantity())
-                                .setUserId(shopCartDTO.getUserId())
-                                .build()))
-                .subscribe(builder::addShopCart)
-                .dispose();
-
-        return Mono.just(builder.build());*/
+   /* public Mono<GetUserShopCartResponse> getAllShopCart(Mono<GetUserShopCartRequest> request) {
         return request.flatMapMany(req -> shopCartService.getAllShopCart(req.getUserId())
                         .map(shopCartDTO -> ShopCartDTO.newBuilder()
                                 .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
                                 .setQuantity(shopCartDTO.getQuantity())
                                 .setUserId(shopCartDTO.getUserId())
-                                .build()))
+                                .build())
+                        .doOnError(error -> log.error(error.getMessage()))
+                        .doOnNext(next -> log.info("объекты получены и преобразованы")))
                 .collectList()
+                .doOnError(error -> log.error(error.getMessage()))
                 .map(shopCart -> GetUserShopCartResponse.newBuilder()
                         .addAllShopCart(shopCart)
                         .build())
+                .doOnError(error -> log.error(error.getMessage()))
+                .doOnSuccess(success -> log.info("Получены товары из корзины пользователя"))
                 .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
-       /* request.flatMap(req -> shopCartService.addProductInShopCart(req.getUserId(), req.getProductId()))
-                .map(shopCart -> AddProductInShopCartResponse.newBuilder()
-                        .setShopCart(ShopCart.newBuilder()
-                                .setProductId(shopCart.getProductId())
-                                .setQuantity(shopCart.getQuantity())
-                                .setUserId(shopCart.getUserId())
-                                .build())
-                        .build())
-                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
-
-
-        val response = GetUserShopCartResponse.newBuilder();
-
-        val shopCartDTOFlux = userIdFromRequest.map(shopCartService::getAllShopCart);
-
-
-        shopCartDTOFlux.flatMap(cartFlux -> cartFlux.flatMap())
-
-        request.flatMap(req -> shopCartService.getAllShopCart(req.getUserId())
-                .flatMap(shopCartDTO -> ShopCartDTO.newBuilder()
-                        .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
-                        .setQuantity(shopCartDTO.getQuantity())
-                        .setUserId(shopCartDTO.getUserId())
-                        .build())
-                .)
-        ;
-*/
-       /* val res = request.flatMap(req -> shopCartService.getAllShopCart(req.getUserId()));
-
-        val result = request.flatMap(req -> shopCartService.getAllShopCart(req.getUserId())
-                .flatMap(shopCartDTO ->
-                )
-                .setAttributes(shopCartDTO.getProduct().getAttributes()
-                        .stream().map(attribute ->
-                                AttributeInfo.newBuilder()
-                                        .setDescription(attribute.getDescription())
-                                        .setName(attribute.getName())
-                                        .setId(attribute.getId())
-                                        .build()))
-
-                .setImages(shopCartDTO.getProduct().getImages()
-                        .stream().map(image -> ImageInfo.newBuilder()
-                                .setId(image.getId())
-                                .setName(image.getName())
-                                .setSize(image.getSize())
-                                .setPath(ByteString.copyFrom(image.getPath()))
-                                .build()))
+    }*/
+    public Mono<GetUserShopCartResponse> getAllShopCart(Mono<GetUserShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.getAllShopCart(req.getUserId())
-                .flatMap(shopCartDTO -> ShopCartDTO.newBuilder()
-                        .setProduct(ProductInfo.newBuilder()
-                                .setId(shopCartDTO.getProduct().getId())
-                                .setAmount(shopCartDTO.getProduct().getAmount())
-                                .setAttributes(shopCartDTO.getProduct().getAttributes()
-                                        .stream().map(attribute ->
-                                                AttributeInfo.newBuilder()
-                                                        .setDescription(attribute.getDescription())
-                                                        .setName(attribute.getName())
-                                                        .setId(attribute.getId())
-                                                        .build()))
-                                .setCategory(CategoryInfo.newBuilder().build())
-                                .setImages(shopCartDTO.getProduct().getImages()
-                                        .stream().map(image -> ImageInfo.newBuilder()
-                                                .setId(image.getId())
-                                                .setName(image.getName())
-                                                .setSize(image.getSize())
-                                                .setPath(ByteString.copyFrom(image.getPath()))
-                                                .build()))
-                                .setName(shopCartDTO.getProduct().getName())
-                                .setPrice(shopCartDTO.getProduct().getPrice())
-                                .setState(shopCartDTO.getProduct().getState())
-                                .setDescription(shopCartDTO.getProduct().getDescription())
-                                .build())
-                        .setQuantity(shopCartDTO.getQuantity())
-                        .setUserId(shopCartDTO.getUserId())
-                        .build())
-        )
-                ;*/
+                        .collectList()
+                        .map(shopCartList -> {
+                            List<ShopCartDTO> shopCartDTOList = new ArrayList<>();
+                            for (ru.kolodkin.shopcartreactivegrpc.bean.ShopCartDTO shopCartDTO : shopCartList) {
+                                shopCartDTOList.add(
+                                        ShopCartDTO.newBuilder()
+                                                .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
+                                                .setQuantity(shopCartDTO.getQuantity())
+                                                .setUserId(shopCartDTO.getUserId())
+                                                .build()
+                                );
+                            }
+                            return GetUserShopCartResponse.newBuilder()
+                                    .addAllShopCart(shopCartDTOList)
+                                    .build();
+                        })
+                        .doOnError(error -> log.error(error.getMessage())))
+                .doOnSuccess(success -> log.info("Получены товары из корзины пользователя"))
+                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
     }
 
     @Override
     public Mono<UpdateProductQuantityInShopCartResponse> updateProductQuantityInShopCart(Mono<UpdateProductQuantityInShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.updateProductQuantityInShopCart(
-                        req.getShopCart().getUserId(),
-                        req.getShopCartOrBuilder().getProductId(),
-                        req.getShopCart().getQuantity()))
-                .map(shopCart -> UpdateProductQuantityInShopCartResponse.newBuilder()
-                        .setShopCart(ShopCart.newBuilder()
-                                .setProductId(shopCart.getProductId())
-                                .setQuantity(shopCart.getQuantity())
-                                .setUserId(shopCart.getUserId())
-                                .build())
-                        .build())
+                                req.getShopCart().getUserId(),
+                                req.getShopCartOrBuilder().getProductId(),
+                                req.getShopCart().getQuantity())
+                        .then(Mono.fromCallable(() -> UpdateProductQuantityInShopCartResponse.newBuilder()
+                                .setStatus("OK")
+                                .build())))
                 .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
     }
 
@@ -167,15 +102,28 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
     }
 
     @Override
-    public Mono<Empty> deleteProductFromShopCart(Mono<DeleteProductFromShopCartRequest> request) {
-        request.map(req -> shopCartService.deleteProductFromShopCart(req.getUserId(), req.getProductId()));
-        return Mono.just(Empty.newBuilder().build());
+    public Mono<DeleteResponse> deleteProductFromShopCart(Mono<DeleteProductFromShopCartRequest> request) {
+        return request.flatMap(req -> shopCartService.deleteProductFromShopCart(req.getUserId(), req.getProductId()))
+                .then(Mono.just(DeleteResponse.newBuilder()
+                        .setStatus("OK")
+                        .build()));
     }
 
     @Override
-    public Mono<Empty> deleteProductsFromShopCart(Mono<DeleteProductsFromShopCartRequest> request) {
-        request.map(req -> shopCartService.deleteProductsFromShopCart(req.getUserId()));
-        return Mono.just(Empty.newBuilder().build());
+    public Mono<DeleteResponse> deleteProductsFromShopCart(Mono<DeleteProductsFromShopCartRequest> request) {
+        return request.flatMap(req -> shopCartService.deleteProductsFromShopCart(req.getUserId()))
+                .then(Mono.just(DeleteResponse.newBuilder()
+                        .setStatus("OK")
+                        .build()));
+    }
+
+    private ProductState switchState(ru.kolodkin.shopcartreactivegrpc.bean.ProductInfo.ProductState state) {
+        if (state == null) {
+            return ProductState.NOT_AVAILABLE;
+        }
+
+        return ProductState.AVAILABLE.name().equals(state.name())
+                ? ProductState.AVAILABLE : ProductState.NOT_AVAILABLE;
     }
 
     private ProductInfo toProductInfoForProto(ru.kolodkin.shopcartreactivegrpc.bean.ProductInfo productInfo) {
@@ -185,8 +133,7 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
                 .setId(productInfo.getId())
                 .setName(productInfo.getName())
                 .setDescription(productInfo.getDescription())
-                .setState(ProductState.AVAILABLE.name().equals(productInfo.getState().name())
-                        ? ProductState.AVAILABLE : ProductState.NOT_AVAILABLE)
+                .setState(switchState(productInfo.getState()))
                 .setPrice(productInfo.getPrice().toString());
 
         productInfo.getAttributes()

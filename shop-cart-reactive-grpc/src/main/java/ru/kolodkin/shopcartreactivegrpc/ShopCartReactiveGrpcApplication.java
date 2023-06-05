@@ -9,5 +9,4 @@ public class ShopCartReactiveGrpcApplication {
     public static void main(String[] args) {
         SpringApplication.run(ShopCartReactiveGrpcApplication.class, args);
     }
-
 }
