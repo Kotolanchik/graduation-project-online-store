@@ -23,11 +23,11 @@
         </processorPath>
         <module name="shop-cart" />
         <module name="shop-cart-reactive" />
-        <module name="catalog-reactive" />
         <module name="catalog" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="catalog-reactive" target="20" />
       <module name="catalog-service" target="20" />
       <module name="shop-order" target="20" />
     </bytecodeTargetLevel>

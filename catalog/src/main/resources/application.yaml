@@ -1,15 +1,18 @@
 server:
   port: 8080
   tomcat:
-    threads.max: 300
-    max-connections: 8192
-  servlet:
-    session:
-      timeout: 500ms
-  jetty:
-    connection-idle-timeout: 5000ms
+    threads.max: 200
+    max-connections: 10000
     threads:
-      idle-timeout: 5000ms
+      min-spare: 20
+    accept-count: 100
+#  servlet:
+#    session:
+#      timeout: 500ms
+#  jetty:
+#    connection-idle-timeout: 5000ms
+#    threads:
+#      idle-timeout: 5000ms
 spring:
   application:
     name: CATALOG-SERVICE
@@ -19,32 +22,36 @@ spring:
     password: postgres
     driverClassName: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 400
-      connection-timeout: 5000
-      idle-timeout: 5000
-      max-lifetime: 5000
-    tomcat:
-      max-active: 2000
-      max-wait: 5000
-  mvc:
-    async:
-      request-timeout: 10000ms
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      pool-name: CatalogServicePool
+      leak-detection-threshold: 60000
+      max-lifetime: 1800000
+  #    tomcat:
+  #      max-active: 2000
+  #      max-wait: 5000
+  #  mvc:
+  #    async:
+  #      request-timeout: 10000ms
+  aop:
+    proxy-target-class: true
 
   jpa:
     generate-ddl: true
     show-sql: false
 
+eureka:
+  client:
+    enabled: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 #  flyway:
 #    url: jdbc:postgresql://localhost/catalogDB
 #    user: postgres
 #    password: postgres
 #    locations: classpath:db/migration
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
 
 springdoc:
   swagger-ui:

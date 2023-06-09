@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.store.catalog.bean.CategoryDTO;
 import ru.store.catalog.bean.CategoryInfo;
+import ru.store.catalog.domain.Category;
 import ru.store.catalog.mapper.CategoryMapper;
 import ru.store.catalog.repository.CategoryRepository;
 
@@ -53,5 +54,9 @@ public class CategoryService {
                 .stream()
                 .map(categoryMapper::categoryToCategoryInfo)
                 .collect(Collectors.toList());
+    }
+
+    public List<Category> getFirstLevelCategories(){
+        return categoryRepository.findFirstLevelCategories();
     }
 }
