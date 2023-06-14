@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  catalog-no-opt-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./src:/app/src
+    environment:
+      server.port: 8080
+      spring.datasource.url: jdbc:postgresql://postgresql_catalog-no-opt:5432/catalogdb
+      spring.datasource.username: postgres
+      spring.datasource.password: postgres
+
+    depends_on:
+      - postgresql_catalog-no-opt
+    networks:
+      - store
+
+  postgresql_catalog-no-opt:
+    image: postgres:15.3
+    restart: always
+    ports:
+      - "5556:5432"
+    environment:
+      - POSTGRES_DB=catalogdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql_catalog-no-opt
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - store
+networks:
+  store:
+    external: true
+    driver: bridge
+

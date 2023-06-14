@@ -24,6 +24,7 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
     @Override
     public Mono<AddProductInShopCartResponse> addProductInShopCart(Mono<AddProductInShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.addProductInShopCart(req.getUserId(), req.getProductId()))
+                .doOnError(error -> log.error("ERROR ADD IN DB: " + error.getMessage()))
                 .map(shopCart -> AddProductInShopCartResponse.newBuilder()
                         .setShopCart(ShopCart.newBuilder()
                                 .setProductId(shopCart.getProductId())
@@ -31,30 +32,14 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
                                 .setUserId(shopCart.getUserId())
                                 .build())
                         .build())
-                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
+                .timeout(Duration.ofMillis(TIMEOUT_MILLIS))
+                .doOnError(error -> log.error("ERROR ADD: " + error.getMessage()));
     }
 
     @Override
-   /* public Mono<GetUserShopCartResponse> getAllShopCart(Mono<GetUserShopCartRequest> request) {
-        return request.flatMapMany(req -> shopCartService.getAllShopCart(req.getUserId())
-                        .map(shopCartDTO -> ShopCartDTO.newBuilder()
-                                .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
-                                .setQuantity(shopCartDTO.getQuantity())
-                                .setUserId(shopCartDTO.getUserId())
-                                .build())
-                        .doOnError(error -> log.error(error.getMessage()))
-                        .doOnNext(next -> log.info("объекты получены и преобразованы")))
-                .collectList()
-                .doOnError(error -> log.error(error.getMessage()))
-                .map(shopCart -> GetUserShopCartResponse.newBuilder()
-                        .addAllShopCart(shopCart)
-                        .build())
-                .doOnError(error -> log.error(error.getMessage()))
-                .doOnSuccess(success -> log.info("Получены товары из корзины пользователя"))
-                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
-    }*/
     public Mono<GetUserShopCartResponse> getAllShopCart(Mono<GetUserShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.getAllShopCart(req.getUserId())
+                .doOnError(error -> log.error("ERROR FROM GET ALL DB: " + error.getMessage()))
                         .collectList()
                         .map(shopCartList -> {
                             List<ShopCartDTO> shopCartDTOList = new ArrayList<>();
@@ -71,9 +56,10 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
                                     .addAllShopCart(shopCartDTOList)
                                     .build();
                         })
-                        .doOnError(error -> log.error(error.getMessage())))
+                .doOnError(error -> log.error("ERROR CREATE RESPONSE GET ALL: " + error.getMessage())))
                 .doOnSuccess(success -> log.info("Получены товары из корзины пользователя"))
-                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
+                .timeout(Duration.ofMillis(TIMEOUT_MILLIS))
+                .doOnError(error -> log.error("ERROR GET ALL PRODUCT: " + error.getMessage()));
     }
 
     @Override
@@ -82,38 +68,53 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
                                 req.getShopCart().getUserId(),
                                 req.getShopCartOrBuilder().getProductId(),
                                 req.getShopCart().getQuantity())
+                        .doOnError(error -> log.error("ERROR UPDATE IN DB: " + error.getMessage()))
                         .then(Mono.fromCallable(() -> UpdateProductQuantityInShopCartResponse.newBuilder()
                                 .setStatus("OK")
-                                .build())))
-                .timeout(Duration.ofMillis(TIMEOUT_MILLIS));
+                                .build()))
+                .doOnError(error -> log.error("ERROR UPDATE CREATE RESPONSE: " + error.getMessage())))
+                .timeout(Duration.ofMillis(TIMEOUT_MILLIS))
+                .doOnError(error -> log.error("ERROR UPDATE: " + error.getMessage()));
     }
 
     @Override
     public Mono<GetShopCartItemResponse> getShopCartProduct(Mono<GetShopCartItemRequest> request) {
-        return request.flatMap(req -> shopCartService.getShopCartProduct(req.getUserId(), req.getProductId()))
-                .map(shopCartDTO -> GetShopCartItemResponse.newBuilder()
-                        .setShopCart(ShopCartDTO.newBuilder()
-                                .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
-                                .setUserId(shopCartDTO.getUserId())
-                                .setQuantity(shopCartDTO.getQuantity())
-                                .build())
-                        .build());
+        return request.flatMap(req ->
+                shopCartService.getShopCartProduct(req.getUserId(), req.getProductId())
+                        .doOnError(error -> log.error("ERROR FROM CATALOG: " + error.getMessage()))
+                        .flatMap(shopCartDTOMono ->
+                                shopCartDTOMono.map(shopCartDTO ->
+                                        GetShopCartItemResponse.newBuilder()
+                                                .setShopCart(ShopCartDTO.newBuilder()
+                                                        .setProduct(toProductInfoForProto(shopCartDTO.getProduct()))
+                                                        .setUserId(shopCartDTO.getUserId())
+                                                        .setQuantity(shopCartDTO.getQuantity())
+                                                        .build())
+                                                .build())
+                                        .doOnError(error -> log.error("ERROR CREATE RESPONSE GET PROD: " + error.getMessage()))
+                        )
+        ).timeout(Duration.ofMillis(TIMEOUT_MILLIS))
+                .doOnError(error -> log.error("ERROR PRODUCT: " + error.getMessage()));
     }
 
     @Override
     public Mono<DeleteResponse> deleteProductFromShopCart(Mono<DeleteProductFromShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.deleteProductFromShopCart(req.getUserId(), req.getProductId()))
+                .doOnError(error -> log.error("ERROR DELETE IN DB: " + error.getMessage()))
                 .then(Mono.just(DeleteResponse.newBuilder()
                         .setStatus("OK")
-                        .build()));
+                        .build()))
+                .doOnError(error -> log.error("ERROR DELETE PRODUCT: " + error.getMessage()));
     }
 
     @Override
     public Mono<DeleteResponse> deleteProductsFromShopCart(Mono<DeleteProductsFromShopCartRequest> request) {
         return request.flatMap(req -> shopCartService.deleteProductsFromShopCart(req.getUserId()))
+                .doOnError(error -> log.error("ERROR DELETE ALL IN DB: " + error.getMessage()))
                 .then(Mono.just(DeleteResponse.newBuilder()
                         .setStatus("OK")
-                        .build()));
+                        .build()))
+                .doOnError(error -> log.error("ERROR DELETE ALL: " + error.getMessage()));
     }
 
     private ProductState switchState(ru.kolodkin.shopcartreactivegrpc.bean.ProductInfo.ProductState state) {
@@ -128,7 +129,10 @@ public class ShopCartGrpcService extends ReactorShopCartServiceGrpc.ShopCartServ
     private ProductInfo toProductInfoForProto(ru.kolodkin.shopcartreactivegrpc.bean.ProductInfo productInfo) {
         val product = ProductInfo.newBuilder()
                 .setAmount(productInfo.getAmount())
-                .setCategory(CategoryInfo.newBuilder().setId(productInfo.getId()).setName(productInfo.getName()).build())
+                .setCategory(CategoryInfo.newBuilder()
+                        .setId(productInfo.getId())
+                        .setName(productInfo.getName())
+                        .build())
                 .setId(productInfo.getId())
                 .setName(productInfo.getName())
                 .setDescription(productInfo.getDescription())

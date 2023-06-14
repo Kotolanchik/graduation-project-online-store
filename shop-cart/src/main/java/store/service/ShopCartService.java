@@ -31,6 +31,10 @@ public class ShopCartService {
                 .build();
     }
 
+    public void deleteAll(){
+        repository.deleteAll();
+    }
+
     public ShopCartResponse getShopCartByUserIdAndProductId(final Long userId, final long productId) {
         return ShopCartResponse.builder()
                 .shopCartDTO(shopCartToDTO(repository.findByUserIdAndProductId(userId, productId)

@@ -7,10 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="shop-cart-grpc-client" />
         <module name="gateway" />
         <module name="identity" />
         <module name="discovery" />
         <module name="shop-cart-reactive-grpc" />
+        <module name="codegen-proto" />
       </profile>
       <profile name="Annotation profile for shop-cart-reactive" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -21,6 +23,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.3.Final/mapstruct-processor-1.5.3.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.3.Final/mapstruct-1.5.3.Final.jar" />
         </processorPath>
+        <module name="catalog-no-optimization" />
         <module name="shop-cart" />
         <module name="shop-cart-reactive" />
         <module name="catalog" />
@@ -35,12 +38,15 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog" options="-parameters" />
+      <module name="catalog-no-optimization" options="-parameters" />
       <module name="catalog-reactive" options="-parameters" />
       <module name="catalog-service" options="-parameters" />
+      <module name="codegen-proto" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="identity" options="-parameters" />
       <module name="shop-cart" options="-parameters" />
+      <module name="shop-cart-grpc-client" options="-parameters" />
       <module name="shop-cart-reactive" options="-parameters" />
       <module name="shop-cart-reactive-grpc" options="-parameters" />
       <module name="shop-order" options="-parameters" />

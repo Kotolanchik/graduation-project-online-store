@@ -12,6 +12,9 @@ import ru.kolodkin.shopcartreactive.bean.ShopCartSimpleDTO;
 import ru.kolodkin.shopcartreactive.entity.ShopCart;
 import ru.kolodkin.shopcartreactive.repository.ShopCartRepository;
 
+import java.util.Map;
+import java.util.Objects;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Service
@@ -21,13 +24,16 @@ public class ShopCartService {
     ShopCartRepository repository;
     Client client;
 
-    @Transactional
+    public Mono<Void> deleteAll(){
+        repository.deleteAll();
+        return Mono.empty();
+    }
+
     public Flux<ShopCartDTO> getShopCartByUserId(final Long userId) {
         return shopCartListToDTOList(repository.findAllByUserId(userId));
     }
 
-    @Transactional
-    public Mono<ShopCartDTO> getShopCartByUserIdAndProductId(final Long userId, final Long productId) {
+    public Mono<Mono<ShopCartDTO>> getShopCartByUserIdAndProductId(final Long userId, final Long productId) {
         return shopCartToDTO(repository.findByUserIdAndProductId(userId, productId));
     }
 
@@ -78,37 +84,70 @@ public class ShopCartService {
         return repository.deleteAllByUserId(userId);
     }
 
-    private Flux<ShopCartDTO> shopCartListToDTOList(final Flux<ShopCart> shopCartFlux) {
-        return client.getProductsByIds(shopCartFlux
-                        .map(ShopCart::getProductId))
+    private Flux<ShopCartDTO> shopCartListToDTOList(Flux<ShopCart> shopCartFlux) {
+        return client.getProductsByIds(shopCartFlux.map(ShopCart::getProductId))
                 .collectMap(ProductInfo::getId, productInfo -> productInfo)
-                .flatMapMany(productMap ->
-                        shopCartFlux.flatMap(shopCart -> {
-                            ProductInfo productInfo = productMap.get(shopCart.getProductId());
-
-                            if (productInfo != null) {
-                                return Mono.just(ShopCartDTO.builder()
-                                        .product(productInfo)
-                                        .quantity(shopCart.getQuantity())
-                                        .userId(shopCart.getUserId())
-                                        .build());
-                            } else {
-                                return Mono.empty();
-                            }
-                        })
+                .flatMapMany(productMap -> shopCartFlux
+                        .flatMap(shopCart -> createShopCartDTO(shopCart, productMap))
+                        .filter(Objects::nonNull)
                 );
     }
 
-    private Mono<ShopCartDTO> shopCartToDTO(final Mono<ShopCart> shopCartMono) {
-        return shopCartMono.flatMap(shopCart ->
-                client.getProductById(shopCart.getProductId())
-                        .flatMap(productInfo ->
-                                Mono.just(ShopCartDTO.builder()
-                                        .product(productInfo)
-                                        .userId(shopCart.getUserId())
-                                        .quantity(shopCart.getQuantity())
-                                        .build())
-                        )
-        );
+    private Mono<Mono<ShopCartDTO>> shopCartToDTO(Mono<ShopCart> shopCartMono) {
+        return shopCartMono
+                .flatMap(shopCart -> client.getProductById(shopCart.getProductId())
+                        .zipWith(Mono.just(shopCart), this::createShopCartDTO)
+                );
     }
+
+    private Mono<ShopCartDTO> createShopCartDTO(ProductInfo productInfo, ShopCart shopCart) {
+        return Mono.just(ShopCartDTO.builder()
+                .product(productInfo)
+                .userId(shopCart.getUserId())
+                .quantity(shopCart.getQuantity())
+                .build());
+    }
+
+    private Mono<ShopCartDTO> createShopCartDTO(ShopCart shopCart, Map<Long, ProductInfo> productMap) {
+        ProductInfo productInfo = productMap.get(shopCart.getProductId());
+        if (productInfo != null) {
+            return createShopCartDTO(productInfo, shopCart);
+        } else {
+            return Mono.empty();
+        }
+    }
+
+//    private Flux<ShopCartDTO> shopCartListToDTOList(final Flux<ShopCart> shopCartFlux) {
+//        return client.getProductsByIds(shopCartFlux
+//                        .map(ShopCart::getProductId))
+//                .collectMap(ProductInfo::getId, productInfo -> productInfo)
+//                .flatMapMany(productMap ->
+//                        shopCartFlux.flatMap(shopCart -> {
+//                            ProductInfo productInfo = productMap.get(shopCart.getProductId());
+//
+//                            if (productInfo != null) {
+//                                return Mono.just(ShopCartDTO.builder()
+//                                        .product(productInfo)
+//                                        .quantity(shopCart.getQuantity())
+//                                        .userId(shopCart.getUserId())
+//                                        .build());
+//                            } else {
+//                                return Mono.empty();
+//                            }
+//                        })
+//                );
+//    }
+//
+//    private Mono<ShopCartDTO> shopCartToDTO(final Mono<ShopCart> shopCartMono) {
+//        return shopCartMono.flatMap(shopCart ->
+//                client.getProductById(shopCart.getProductId())
+//                        .flatMap(productInfo ->
+//                                Mono.just(ShopCartDTO.builder()
+//                                        .product(productInfo)
+//                                        .userId(shopCart.getUserId())
+//                                        .quantity(shopCart.getQuantity())
+//                                        .build())
+//                        )
+//        );
+//    }
 }

@@ -23,9 +23,14 @@ public class ShopCartController {
     ShopCartService service;
 
     @GetMapping("/{id}")
-    public Mono<ShopCartDTO> getShopCartProduct(@PathVariable("id") Long userId,
+    public Mono<Mono<ShopCartDTO>> getShopCartProduct(@PathVariable("id") Long userId,
                                                 @RequestParam("productId") final Long productId) {
         return service.getShopCartByUserIdAndProductId(userId, productId);
+    }
+
+    @DeleteMapping("/deleteAll")
+    public Mono<Void> deleteAll() {
+        return service.deleteAll();
     }
 
     @GetMapping("/{userId}/all")
