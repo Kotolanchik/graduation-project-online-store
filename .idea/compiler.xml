@@ -11,8 +11,9 @@
         <module name="identity" />
         <module name="discovery" />
         <module name="shop-cart-reactive-grpc" />
+        <module name="catalog-index" />
       </profile>
-      <profile name="Annotation profile for shop-cart-reactive" enabled="true">
+      <profile name="Annotation profile for catalog-redis" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -21,22 +22,27 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.3.Final/mapstruct-processor-1.5.3.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.3.Final/mapstruct-1.5.3.Final.jar" />
         </processorPath>
+        <module name="catalog-redis" />
         <module name="shop-cart" />
-        <module name="shop-cart-reactive" />
         <module name="catalog" />
+        <module name="shop-cart-reactive" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="catalog-reactive" target="20" />
       <module name="catalog-service" target="20" />
+      <module name="demo" target="20" />
       <module name="shop-order" target="20" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog" options="-parameters" />
+      <module name="catalog-index" options="-parameters" />
       <module name="catalog-reactive" options="-parameters" />
+      <module name="catalog-redis" options="-parameters" />
       <module name="catalog-service" options="-parameters" />
+      <module name="demo" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="identity" options="-parameters" />
