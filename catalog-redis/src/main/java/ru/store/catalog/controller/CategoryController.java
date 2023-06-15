@@ -21,7 +21,6 @@ import static lombok.AccessLevel.PRIVATE;
 @RestController
 @ResponseBody
 @FieldDefaults(level = PRIVATE)
-@CacheConfig(cacheNames = {"Category"})
 @RequestMapping("/category")
 public class CategoryController {
     final CategoryService categoryService;
@@ -30,24 +29,16 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @Cacheable
     @GetMapping("/all")
     public ResponseEntity<List<CategoryInfo>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
 
-    @Cacheable
     @GetMapping("/primary")
     public ResponseEntity<List<CategoryInfo>> getFirstLevelCategories() {
-        return ResponseEntity.ok(categoryService.getFirstLevelCategories()
-                .stream()
-                .map(category -> CategoryInfo.builder()
-                        .name(category.getName())
-                        .build())
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(categoryService.getFirstLevelCategories());
     }
 
-    @Cacheable
     @GetMapping("/{id}")
     public ResponseEntity<CategoryInfo> getCategories(@PathVariable("id") final long id) {
         return ResponseEntity.ok(categoryService.getCategory(id));

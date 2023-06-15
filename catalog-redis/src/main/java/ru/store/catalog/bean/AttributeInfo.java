@@ -3,6 +3,8 @@ package ru.store.catalog.bean;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Getter
@@ -11,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = PRIVATE)
-public class AttributeInfo {
+public class AttributeInfo implements Serializable {
     Long id;
     String name;
     String description;

@@ -1,6 +1,8 @@
 package ru.store.catalog.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.store.catalog.bean.CategoryDTO;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = {"Category"})
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -56,7 +59,11 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public List<Category> getFirstLevelCategories(){
-        return categoryRepository.findFirstLevelCategories();
+    @Cacheable(value = "primary")
+    public List<CategoryInfo> getFirstLevelCategories(){
+        return categoryRepository.findFirstLevelCategories()
+                .stream()
+                .map(categoryMapper::categoryToCategoryInfo)
+                .toList();
     }
 }

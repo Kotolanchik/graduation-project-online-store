@@ -3,6 +3,8 @@ package ru.store.catalog.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -54,7 +56,7 @@ public class ProductController {
     public ResponseEntity<List<ProductInfo>> getProductsByIds(@RequestParam("productIds") List<Long> productIds) {
         return ResponseEntity.ok(productService.getProductsByIds(productIds));
     }
-
+    
     @PostMapping("/add")
     public ResponseEntity<ProductInfo> saveProduct(@RequestBody final ProductDTO product) {
         return ResponseEntity.ok(productService.saveProduct(product));

@@ -22,13 +22,17 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.3.Final/mapstruct-1.5.3.Final.jar" />
         </processorPath>
         <module name="shop-cart" />
+        <module name="catalog-redis" />
         <module name="shop-cart-reactive" />
         <module name="catalog" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="catalog-no-optimization" target="20" />
       <module name="catalog-reactive" target="20" />
       <module name="catalog-service" target="20" />
+      <module name="codegen-proto" target="20" />
+      <module name="shop-cart-grpc-client" target="20" />
       <module name="shop-order" target="20" />
     </bytecodeTargetLevel>
   </component>
@@ -36,6 +40,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog" options="-parameters" />
       <module name="catalog-reactive" options="-parameters" />
+      <module name="catalog-redis" options="-parameters" />
       <module name="catalog-service" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
