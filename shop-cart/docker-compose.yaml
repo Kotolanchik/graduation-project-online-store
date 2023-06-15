@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  postgresql_shop-cart:
+    image: postgres:15.3
+    restart: always
+    ports:
+      - "6666:5432"
+    environment:
+      - POSTGRES_DB=shop-cartDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+
+

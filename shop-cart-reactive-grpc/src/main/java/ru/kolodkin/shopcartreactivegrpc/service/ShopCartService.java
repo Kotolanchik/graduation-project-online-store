@@ -14,7 +14,7 @@ public interface ShopCartService {
 
     Mono<ShopCart> updateProductQuantityInShopCart(Long userId, Long productId, Long quantity);
 
-    Mono<ShopCartDTO> getShopCartProduct(Long userId, Long productId);
+    Mono<Mono<ShopCartDTO>> getShopCartProduct(Long userId, Long productId);
 
     Mono<Void> deleteProductFromShopCart(Long userId, Long productId);
 

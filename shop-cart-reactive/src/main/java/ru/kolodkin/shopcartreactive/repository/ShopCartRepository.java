@@ -20,6 +20,11 @@ public interface ShopCartRepository extends R2dbcRepository<ShopCart, CompositeS
     Mono<Void> deleteAllByUserId(Long userId);
 
     @Query("""
+             DELETE FROM shop-cartDB
+             """)
+    Mono<Void> deleteAll();
+
+    @Query("""
             UPDATE public.shop_cart 
             SET quantity = :quantity 
             WHERE product_id = :productId AND user_id = :userId

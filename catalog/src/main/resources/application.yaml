@@ -1,11 +1,11 @@
 server:
   port: 8080
   tomcat:
-    threads.max: 200
-    max-connections: 10000
+    threads.max: 650
+    max-connections: 100000
     threads:
-      min-spare: 20
-    accept-count: 100
+      min-spare: 100
+    accept-count: 200
 #  servlet:
 #    session:
 #      timeout: 500ms
@@ -22,12 +22,12 @@ spring:
     password: postgres
     driverClassName: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 20
-      connection-timeout: 30000
-      idle-timeout: 600000
+      maximum-pool-size: 100
+      connection-timeout: 1000
+      idle-timeout: 2000
       pool-name: CatalogServicePool
-      leak-detection-threshold: 60000
-      max-lifetime: 1800000
+      leak-detection-threshold: 10000
+      max-lifetime: 60000
   #    tomcat:
   #      max-active: 2000
   #      max-wait: 5000

@@ -34,6 +34,12 @@ public class ShopCartController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/all/delete")
+    public ResponseEntity<?> deleteAll(){
+        service.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping ("/{userId}")
     public ResponseEntity<?> setProductQuantity(@PathVariable final Long userId, @RequestParam final Long productId, @RequestParam final Long quantity) {
         service.setUserShopCart(userId, productId, quantity);
