@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor
 @FieldDefaults(level = PRIVATE)
 @Entity
-@Table(name = "category")
+@Table(name = "category", indexes = {@Index(name = "idx_category_id", columnList = "category_id")})
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

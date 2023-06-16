@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+  catalog-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./src:/app/src
+    environment:
+       #eureka.client.service-url.defaultZone: http://discovery-service:8761/eureka/
+      server.port: 8080
+      spring.datasource.url: jdbc:postgresql://postgresql_catalog:5432/catalog_db_index
+      spring.datasource.username: postgres
+      spring.datasource.password: postgres
+      #spring.client.enabled: false
+#      server.tomcat.threads.max: 160
+#      server.tomcat.max-connections: 80
+#      server.tomcat.threads.min-spare: 10
+#      server.tomcat.accept-count: 60
+
+#      spring.datasource.hikari.maximum-pool-size: 10
+#      spring.datasource.hikari.connection-timeout: 10000
+#      spring.datasource.hikari.idle-timeout: 10000
+#      spring.datasource.hikari.pool-name: CatalogServicePool
+#      spring.datasource.hikari.leak-detection-threshold: 10000
+#      spring.datasource.hikari.max-lifetime: 100000
+    depends_on:
+      - postgresql_catalog
+
+  postgresql_catalog:
+    image: postgres:15.3
+    restart: always
+    ports:
+      - "5557:5432"
+#    command: postgres -c max_connections=125 -c shared_buffers=256MB
+    #  command: postgres -c max_connections=300 -c shared_buffers=3GB
+
+    environment:
+      - POSTGRES_DB=catalogdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql_catalog
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data

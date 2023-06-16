@@ -17,7 +17,7 @@ spring:
   application:
     name: CATALOG-SERVICE
   datasource:
-    url: jdbc:postgresql://localhost/catalogdb
+    url: jdbc:postgresql://localhost/catalog_db_index
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver

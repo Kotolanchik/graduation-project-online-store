@@ -12,7 +12,7 @@
         <module name="discovery" />
         <module name="shop-cart-reactive-grpc" />
       </profile>
-      <profile name="Annotation profile for shop-cart-reactive" enabled="true">
+      <profile name="Annotation profile for catalog-index" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -23,6 +23,7 @@
         </processorPath>
         <module name="shop-cart" />
         <module name="catalog-redis" />
+        <module name="catalog-index" />
         <module name="shop-cart-reactive" />
         <module name="catalog" />
       </profile>
@@ -39,6 +40,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog" options="-parameters" />
+      <module name="catalog-elasticsearch" options="-parameters" />
+      <module name="catalog-index" options="-parameters" />
       <module name="catalog-reactive" options="-parameters" />
       <module name="catalog-redis" options="-parameters" />
       <module name="catalog-service" options="-parameters" />

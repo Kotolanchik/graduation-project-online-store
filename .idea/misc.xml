@@ -14,7 +14,7 @@
         <option value="$PROJECT_DIR$/catalog-reactive/pom.xml" />
         <option value="$PROJECT_DIR$/shop-cart-reactive/pom.xml" />
         <option value="$PROJECT_DIR$/shop-cart-reactive-grpc/pom.xml" />
-        <option value="$PROJECT_DIR$/catalog-redis/pom.xml" />
+        <option value="$PROJECT_DIR$/catalog-index/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
