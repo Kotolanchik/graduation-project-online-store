@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Магазин</a>
+
+    <div >
+    <a class="nav-link text-white" routerLink="/user"><i><a class="size">
+      Авторизация</a></i></a>
+    </div>
+  </div>
+</nav>
+<nav class="navbar navbar-expand-lg">
+  <ul class="navbar-nav d-flex flex-row">
+    <li class="nav-item me-3 me-lg-0" (mouseover)="showCategories = true" (mouseleave)="showCategories = false">
+      <a class="nav-link text-white" routerLink="/"><i><a class="size"> Каталог</a></i></a>
+      <div class="categories-container" *ngIf="showCategories">
+        <ul class="categories-list">
+          <li *ngFor="let category of categories" (click)="selectCategory(category)">{{ category }}</li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item me-3 me-lg-0">
+      <a class="nav-link text-white" routerLink="/cart"><i><a class="size"> Корзина</a></i></a>
+    </li>
+  </ul>
+</nav>

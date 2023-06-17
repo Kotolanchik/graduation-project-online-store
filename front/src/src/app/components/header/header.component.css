@@ -1,0 +1,54 @@
+.navigation {
+  --color: white;
+}
+
+.navbar-brand, .navbar-nav, .nav-item, .container-fluid, .navbar {
+  background-color: #38332e;
+}
+
+.navbar-brand {
+  color: white;
+}
+
+.nav-link {
+}
+
+.size {
+  text-decoration: none;
+  color: white;
+}
+
+.categories-container {
+  position: absolute;
+  background-color: #98867b;
+  padding: 0.5rem;
+  list-style-type: none;
+  margin-top: 0.5rem;
+  animation: fade-in 0.3s;
+}
+
+.categories-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.categories-list li {
+  color: white;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: background-color 0.3s;
+}
+
+.categories-list li:hover {
+  background-color: #604f49;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

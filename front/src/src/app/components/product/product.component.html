@@ -1,0 +1,46 @@
+<div class="row justify-content-center mb-3">
+  <div class="col-md-12 col-xl-10">
+    <div class="card shadow-0 border rounded-3">
+      <div class="card-body">
+        <div class="col-12"> <!-- Добавлен контейнер -->
+          <div class="row">
+
+
+            <div class="bg-image hover-zoom ripple rounded ripple-surface text-center">
+              <h5>{{ product.name }}</h5>
+              <div class="image-wrapper w-100">
+                <img [src]="product.image" class="img-fluid" alt="Product Image"/>
+              </div>
+            </div>
+            <div class="col-md-12 ">
+              <div class="mt-2 text-muted small"> Описание: {{ product.description }}</div>
+              <div class="mt-2">
+                <ul class="list-group">
+                  <li class="list-group-item" *ngFor="let attribute of product.attributes">
+                    <strong>{{ attribute.name }}</strong>:<span
+                    class="ps-1 mb-1 text-muted small">{{ attribute.description }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="">
+                <h6>Цена: {{ product.price }} Рублей</h6>
+                <p *ngIf="product.isAvailable">Есть на складе: {{ product.availableQuantity }}</p>
+                <div *ngIf="product.isAvailable" class="text-center">
+
+                  <button class="btn btn-outline-primary btn-sm" (click)="addToCart()" type="button">
+                    Добавить в корзину
+                  </button>
+                </div>
+                <div *ngIf="!product.isAvailable">
+                  <p>Нет в наличии</p>
+                </div>
+
+               <div class="text-center"> <small class="error-message " *ngIf="isAlreadyInCart">Товар уже добавлен в корзину!</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

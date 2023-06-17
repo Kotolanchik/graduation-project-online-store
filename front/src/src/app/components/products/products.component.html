@@ -1,0 +1,19 @@
+<h1 class="font-bold text-center fw-light" style="background-color: #98aada; padding-bottom: 5px">Фрукты</h1>
+<div class="font-bold mt-1 mb-1" style="padding-left: 100px">
+  <div class="btn-group">
+    <div class="me-3 pt-2"> Сортировать по: </div>
+    <div class="me-3">
+    <button class="btn btn-outline-primary btn-sm mt-2" (click)="sortProducts('name')">имени</button></div>
+    <div class="me-3"> <button class="btn btn-outline-primary btn-sm mt-2" (click)="sortProducts('price')">цене</button></div>
+    <div class="me-3"><button class="btn btn-outline-primary btn-sm mt-2" (click)="sortProducts('id')">идентификатору</button></div>
+  </div>
+</div>
+<section class="background">
+  <div class="container py-1">
+    <div class="row">
+      <div class="col-md-4" *ngFor="let product of products$ | async">
+        <app-product [product]="product"></app-product>
+      </div>
+    </div>
+  </div>
+</section>
